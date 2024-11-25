@@ -9,13 +9,9 @@ public class Main {
     private static List<Moto> motos = new ArrayList<>();
     private static List<Pessoa> clientes = new ArrayList<>();
     private static List<Venda> vendas = new ArrayList<>();
-    public static void main(String[] args) {
-        // Veiculo veiculo = new Veiculo("Chevrolet", "Onix", 2015, "Prata", 45000);
-        // Carro carro = new Carro("Chevrolet", "Onix", 2015, "Prata", 45000,5,"Flex",200);
-        // Moto moto = new Moto("Kawasaky","Ninja 900",2019,"Verde",55000,900,true,"Head");
-        // Pessoa pessoa = new Pessoa("Leonardo", 52, "Rua 1 n123", "1138325599", "leo@email.com", 192, 98.4);
-        // Venda venda = new Venda(carro, pessoa, 50000, LocalDateTime.now());
+    private static List<Van> vans = new ArrayList<>();
 
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int escolha = 0;
         do{
@@ -69,6 +65,9 @@ public class Main {
         mostrarCarros();
         System.out.println("----------------------------------");
         mostrarMotos();
+        System.out.println("----------------------------------");
+        mostrarVans();
+        System.out.println("");
     }
 
     private static void mostrarCarros(){
@@ -97,6 +96,19 @@ public class Main {
         }
     }
 
+    private static void mostrarVans(){
+        if (!vans.isEmpty()) {
+            System.out.println("### Lista de Vans ###");
+            int x = 1;
+            for (Van van : vans) {
+                System.out.println(x+" - "+van.getModelo()+" - "+van.getAno());
+                x++;
+            }
+        }else{
+            System.out.println("Nenhuma van foi encontrada!");
+        }
+    }
+
     private static void comprarVeiculo(Scanner scanner) {
         try{
             System.out.println("### Compra de Veiculo ###");
@@ -105,11 +117,12 @@ public class Main {
             System.out.println("Qual novo veiculo deseja cadastrar?");
             System.out.println("1 - Carro");
             System.out.println("2 - Moto");
+            System.out.println("3 - Van");
             System.out.println("0 - Voltar ao menu");
             escolha = scanner.nextInt();
             scanner.nextLine();
 
-            if (escolha > 2) {
+            if (escolha > 3) {
                 throw new InputMismatchException();
             }
             while (escolha != 0) {
@@ -144,7 +157,7 @@ public class Main {
 
                         Carro carro = new Carro(marca, modelo, ano, cor, preco, nPortar, tipoCombustivel, capacidadePortaMalas);
                         carros.add(carro);
-                        System.out.println("Carro modelo: "+modelo+", cadastrado com sucesso!");
+                        System.out.println("Carro modelo: "+modelo+", cadastrado com sucesso!\n");
                         escolha = 0;
                         break;
                     
@@ -167,8 +180,32 @@ public class Main {
 
                         Moto moto = new Moto(marca, modelo, ano, cor, preco, cilindradas, partidaEletrica, categoria);
                         motos.add(moto);
-                        System.out.println("moto modelo: "+modelo+", cadastrada com sucesso!");
+                        System.out.println("moto modelo: "+modelo+", cadastrada com sucesso!\n");
                         escolha = 0;
+                        break;
+
+                    case 3:
+                        System.out.print("Digite a quantidade total de assentos para passageiros: ");
+                        int qtdAssentos = scanner.nextInt();
+                        scanner.nextLine();
+
+                        System.out.println("A van possui porta automática ? S - Sim, N - Não");
+                        String porta = scanner.nextLine();
+                        boolean portaAutomatica;
+                        if(porta == "S" || porta == "s"){
+                            portaAutomatica = true;
+                        }else{
+                            portaAutomatica = false;
+                        }
+
+                        System.out.print("Digite a capacidade total de carga da van : ");
+                        double capacidadeCarga = scanner.nextDouble();
+
+                        Van van = new Van(marca, modelo, ano, cor, preco, qtdAssentos, capacidadeCarga, portaAutomatica);
+                        vans.add(van);
+                        System.out.println("Van modelo: "+modelo+", cadastrada com sucesso!\n");
+                        escolha = 0;
+
                         break;
                     default:
                         System.out.println("Opção invalida. Tente novamente.");
@@ -185,7 +222,7 @@ public class Main {
 
     private static void venderVeiculo(Scanner scanner) {
         try{
-            if (clientes.isEmpty() || (carros.isEmpty() && motos.isEmpty())) {
+            if (clientes.isEmpty() || (carros.isEmpty() || motos.isEmpty()) && (vans.isEmpty())) {
                 if (clientes.isEmpty()) {
                     System.out.println("Não há clientes na base de dados!");
                 }
@@ -194,6 +231,9 @@ public class Main {
                 }
                 if (motos.isEmpty()) {
                     System.out.println("Não há motos disponiveis para vendas!");
+                }
+                if (vans.isEmpty()) {
+                    System.out.println("Não há vans disponiveis para vendas!");
                 }
             }else{
                 mostrarClientes();
@@ -206,9 +246,10 @@ public class Main {
 
                 int escolha;
 
-                System.out.println("Qual novo veiculo deseja vender?");
+                System.out.println("Qual novo veículo deseja vender?");
                 System.out.println("1 - Carro");
                 System.out.println("2 - Moto");
+                System.out.println("3 - Van");
                 escolha = scanner.nextInt();
                 scanner.nextLine();
 
@@ -232,9 +273,16 @@ public class Main {
                         vendas.add(novaVendaMoto);
                         motos.remove(motoParaVenda);
                         break;
-                    
-                }
+                    case 3:
+                        mostrarVans();
+                        Van vanParaVenda = vans.get(scanner.nextInt() -1);
+                        scanner.nextLine();
 
+                        Venda novaVendaVan = new Venda(vanParaVenda, comprador, valor, LocalDateTime.now());
+                        vendas.add(novaVendaVan);
+                        vans.remove(vanParaVenda);
+                        break;
+                }
                 System.out.println("Venda executada com sucesso!");
             }
         }catch (InputMismatchException e){
@@ -290,7 +338,7 @@ public class Main {
             Pessoa novoCliente = new Pessoa(nome, idade, endereco, telefone, email, altura, peso);
             clientes.add(novoCliente);
 
-            System.out.println("O cliente: "+nome+", foi cadastrado com sucesso!");
+            System.out.println("O cliente: "+nome+", foi cadastrado com sucesso!\n");
         }catch (InputMismatchException e){
             System.out.println("Erro: Entrada invalida. Certifique-se de inserir os dados corretamente!");
         }catch (Exception e){
