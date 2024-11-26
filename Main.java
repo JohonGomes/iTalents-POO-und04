@@ -17,9 +17,9 @@ public class Main {
         do{
             try{
                 System.out.println("### Menu Concessionaria ###");
-                System.out.println("1 - Mostrar Veiculos");
-                System.out.println("2 - Comprar Veiculo");
-                System.out.println("3 - Vender Veiculo");
+                System.out.println("1 - Mostrar Veículos");
+                System.out.println("2 - Comprar Veículo");
+                System.out.println("3 - Vender Veículo");
                 System.out.println("4 - Cadastrar um cliente");
                 System.out.println("5 - Gerar relatorio");
                 System.out.println("6 - Exibir Clientes Cadastrados");
@@ -79,52 +79,26 @@ public class Main {
         }
     }
 
+    private static <T extends Veiculo> void mostrarVeiculos(List<T> veiculos, String titulo) {
+        if (!veiculos.isEmpty()) {
+            System.out.println("### " + titulo + " ###");
+            int x = 1;
+            for (T veiculo : veiculos) {
+                System.out.println(x + " - " + veiculo.getModelo() + " - " + veiculo.getAno());
+                x++;
+            }
+        } else {
+            System.out.println("Nenhum " + titulo.toLowerCase().substring(0, titulo.length() - 1) + " foi encontrado!");
+        }
+    }
+
     private static void mostrarVeiculos() {
-        mostrarCarros();
+        mostrarVeiculos(carros, "Lista de Carros");
         System.out.println("----------------------------------");
-        mostrarMotos();
+        mostrarVeiculos(motos, "Lista de Motos");
         System.out.println("----------------------------------");
-        mostrarVans();
+        mostrarVeiculos(vans, "Lista de Vans");
         System.out.println("");
-    }
-
-    private static void mostrarCarros(){
-        if (!carros.isEmpty()) {
-            System.out.println("### Lista de Carros ###");
-            int x = 1;
-            for (Carro carro : carros) {
-                System.out.println(x+" - "+carro.getModelo()+" - "+carro.getAno());
-                x++;
-            }
-        }else{
-            System.out.println("Nenhum carro foi encontrado!");
-        }
-    }
-
-    private static void mostrarMotos(){
-        if (!motos.isEmpty()) {
-            System.out.println("### Lista de Motos ###");
-            int x = 1;
-            for (Moto moto : motos) {
-                System.out.println(x+" - "+moto.getModelo()+" - "+moto.getAno());
-                x++;
-            }
-        }else{
-            System.out.println("Nenhuma moto foi encontrada!");
-        }
-    }
-
-    private static void mostrarVans(){
-        if (!vans.isEmpty()) {
-            System.out.println("### Lista de Vans ###");
-            int x = 1;
-            for (Van van : vans) {
-                System.out.println(x+" - "+van.getModelo()+" - "+van.getAno());
-                x++;
-            }
-        }else{
-            System.out.println("Nenhuma van foi encontrada!");
-        }
     }
 
     private static void comprarVeiculo(Scanner scanner) {
@@ -273,7 +247,7 @@ public class Main {
 
                 switch (escolha) {
                     case 1:
-                        mostrarCarros();
+
                         Carro carroParaVenda = carros.get(scanner.nextInt() -1);
                         scanner.nextLine();
 
@@ -283,7 +257,7 @@ public class Main {
                         break;
                 
                     case 2:
-                        mostrarMotos();
+
                         Moto motoParaVenda = motos.get(scanner.nextInt() -1);
                         scanner.nextLine();
 
@@ -292,7 +266,7 @@ public class Main {
                         motos.remove(motoParaVenda);
                         break;
                     case 3:
-                        mostrarVans();
+
                         Van vanParaVenda = vans.get(scanner.nextInt() -1);
                         scanner.nextLine();
 
