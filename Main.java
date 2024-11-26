@@ -22,6 +22,7 @@ public class Main {
                 System.out.println("3 - Vender Veiculo");
                 System.out.println("4 - Cadastrar um cliente");
                 System.out.println("5 - Gerar relatorio");
+                System.out.println("6 - Exibir Clientes Cadastrados");
                 System.out.println("0 - Sair");
                 System.out.print("Escolha uma opção: ");
                 escolha = scanner.nextInt();
@@ -44,6 +45,9 @@ public class Main {
                     case 5:
                         gerarRelatorio();
                         break;
+                    case 6:
+                        exibirClientesCadastrados();
+                        break;
                     case 0:
                         System.out.println("Fechando o programa...");
                         break;
@@ -59,6 +63,20 @@ public class Main {
         } while (escolha != 0);
 
         scanner.close();
+    }
+
+
+    private static void exibirClientesCadastrados() {
+        if (!clientes.isEmpty()) {
+            System.out.println("### Lista de Clientes Cadastrados ###");
+            int x = 1;
+            for (Pessoa pessoa : clientes) {
+                System.out.println(x+"\n - "+pessoa.getNome()+" - "+pessoa.getEmail() + " - " + pessoa.getTelefone() + "\n");
+                x++;
+            }
+        }else{
+            System.out.println("Nenhum cliente foi encontrado!");
+        }
     }
 
     private static void mostrarVeiculos() {
