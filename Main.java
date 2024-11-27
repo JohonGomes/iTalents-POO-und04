@@ -106,7 +106,7 @@ public class Main {
             System.out.println("### " + titulo + " ###");
             int x = 1;
             for (T veiculo : veiculos) {
-                System.out.println(x + " - " + veiculo.getModelo() + " - " + veiculo.getAno());
+                System.out.println(x + " - " + veiculo.getModelo() + " - Ano: " + veiculo.getAno() + " - Preço de Custo: R$ " + veiculo.getPreco());
                 x++;
             }
         } else {
@@ -154,7 +154,7 @@ public class Main {
                 String cor = scanner.nextLine();
 
                 System.out.print("Digite o preço do veículo: ");
-                double preco = scanner.nextDouble();
+                double preco = scanner.nextDouble(); //preço de custo
             
                 switch (escolha) {
                     case 1:
@@ -236,7 +236,7 @@ public class Main {
 
     private static void venderVeiculo(Scanner scanner) {
         try{
-            if (clientes.isEmpty() || (carros.isEmpty() || motos.isEmpty()) && (vans.isEmpty())) {
+            if (clientes.isEmpty() || (carros.isEmpty() && motos.isEmpty()) && (vans.isEmpty())) {
                 if (clientes.isEmpty()) {
                     System.out.println("Não há clientes na base de dados!");
                 }
@@ -277,7 +277,7 @@ public class Main {
                         vendas.add(novaVendaCarro);
                         carros.remove(carroParaVenda);
                         break;
-                
+
                     case 2:
                         mostrarVeiculos();
                         Moto motoParaVenda = motos.get(scanner.nextInt() -1);
@@ -366,13 +366,37 @@ public class Main {
         }else{
             System.out.println("### Relatorio de vendas ###");
             System.out.println();
+
+            double totalLucro = 0.0;
+
             for (Venda venda : vendas) {
+               double custoVeiculo = venda.getVeiculo().getPreco();
+               double valorVenda = venda.getValor();
+               double lucro = valorVenda - custoVeiculo;
+
                System.out.println("Data: "+ venda.getDataVenda());
                System.out.println("Veiculo: "+venda.getVeiculo().getModelo()+" - "+venda.getVeiculo().getAno());
                System.out.println("Comprador: "+venda.getComprador().getNome()+" - "+venda.getComprador().getTelefone());
+               System.out.println("Valor de Custo: R$ " + custoVeiculo);
                System.out.println("Valor da venda: R$"+venda.getValor());
-               System.out.println("----------------------------------------------------------------"); 
-               System.out.println();
+
+                if (lucro >= 0) {
+                    System.out.println("Lucro: R$" + String.format("%.2f", lucro));
+                } else {
+                    System.out.println("Prejuízo: R$" + String.format("%.2f", Math.abs(lucro)));
+                }
+
+                totalLucro += lucro;
+
+                System.out.println("----------------------------------------------------------------");
+                System.out.println();
+            }
+            // Resumo total do relatório
+            System.out.println("Resumo Financeiro:");
+            if(totalLucro > 0){
+                System.out.println("Você teve um lucro total de: R$" + String.format("%.2f", totalLucro));
+            }else{
+                System.out.println("Você teve um prejuízo total de : R$" + String.format("%.2f", totalLucro));
             }
         }
     }
