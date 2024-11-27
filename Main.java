@@ -23,6 +23,7 @@ public class Main {
                 System.out.println("4 - Cadastrar um cliente");
                 System.out.println("5 - Gerar relatorio");
                 System.out.println("6 - Exibir Clientes Cadastrados");
+                System.out.println("7 - Sugestão de Moto de acordo com Biotipo");
                 System.out.println("0 - Sair");
                 System.out.print("Escolha uma opção: ");
                 escolha = scanner.nextInt();
@@ -48,6 +49,9 @@ public class Main {
                     case 6:
                         exibirClientesCadastrados();
                         break;
+                    case 7:
+                        sugestaoVeiculo(scanner);
+                        break;
                     case 0:
                         System.out.println("Fechando o programa...");
                         break;
@@ -65,13 +69,31 @@ public class Main {
         scanner.close();
     }
 
+    private static void sugestaoVeiculo(Scanner scanner) {
+        System.out.println("--- Sugestão de Moto por Biotipo do Cliente ---\n");
+        System.out.println("Qual o peso do cliente?");
+        double peso = scanner.nextDouble();
+        scanner.nextLine();
+
+        if(peso <= 90){
+            System.out.println("Para esse cliente como peso " + peso + "KG recomendamos a Moto da Marca Honda de 50cc.\n");
+        }else if (peso > 90 && peso < 152){
+            System.out.println("Para esse cliente como peso " + peso + "KG recomendamos a Moto Yamaha de 115cc.\n");
+        }else if (peso >= 152 && peso <= 166){
+            System.out.println("Para esse cliente como peso " + peso + "KG recomendamos a Moto Honda de 125cc.\n");
+        }else if (peso > 166 && peso <= 192){
+            System.out.println("Para esse cliente como peso " + peso + "KG recomendamos a Moto da Marca Yamaha de 125cc.\n");
+        } else{
+            System.out.println("Infelizmente, não temos recomendações específicas para esse peso.\n");
+        }
+    }
 
     private static void exibirClientesCadastrados() {
         if (!clientes.isEmpty()) {
             System.out.println("### Lista de Clientes Cadastrados ###");
             int x = 1;
             for (Pessoa pessoa : clientes) {
-                System.out.println(x+"\n - "+pessoa.getNome()+" - "+pessoa.getEmail() + " - " + pessoa.getTelefone() + "\n");
+                System.out.println(x+"-"+pessoa.getNome()+" - "+pessoa.getEmail() + " - " + pessoa.getTelefone() + "\n");
                 x++;
             }
         }else{
@@ -247,7 +269,7 @@ public class Main {
 
                 switch (escolha) {
                     case 1:
-
+                        mostrarVeiculos();
                         Carro carroParaVenda = carros.get(scanner.nextInt() -1);
                         scanner.nextLine();
 
@@ -257,7 +279,7 @@ public class Main {
                         break;
                 
                     case 2:
-
+                        mostrarVeiculos();
                         Moto motoParaVenda = motos.get(scanner.nextInt() -1);
                         scanner.nextLine();
 
@@ -266,7 +288,7 @@ public class Main {
                         motos.remove(motoParaVenda);
                         break;
                     case 3:
-
+                        mostrarVeiculos();
                         Van vanParaVenda = vans.get(scanner.nextInt() -1);
                         scanner.nextLine();
 
@@ -275,7 +297,7 @@ public class Main {
                         vans.remove(vanParaVenda);
                         break;
                 }
-                System.out.println("Venda executada com sucesso!");
+                System.out.println("Venda executada com sucesso!\n");
             }
         }catch (InputMismatchException e){
             System.out.println("Erro: Entrada invalida. Certifique-se de inserir os dados corretamente!");
