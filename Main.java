@@ -3,6 +3,19 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+// Exceção para cliente não encontrado
+class ClienteNaoEncontradoException extends Exception {
+    public ClienteNaoEncontradoException(String message) {
+        super(message);
+    }
+}
+
+// Exceção para veículo indisponível
+class VeiculoIndisponivelException extends Exception {
+    public VeiculoIndisponivelException(String message) {
+        super(message);
+    }
+}
 
 public class Main {
     private static List<Carro> carros = new ArrayList<>();
@@ -235,78 +248,83 @@ public class Main {
     }
 
     private static void venderVeiculo(Scanner scanner) {
-        try{
-            if (clientes.isEmpty() || (carros.isEmpty() && motos.isEmpty()) && (vans.isEmpty())) {
-                if (clientes.isEmpty()) {
-                    System.out.println("Não há clientes na base de dados!");
-                }
-                if (carros.isEmpty()) {
-                    System.out.println("Não há carros disponiveis para vendas!");
-                }
-                if (motos.isEmpty()) {
-                    System.out.println("Não há motos disponiveis para vendas!");
-                }
-                if (vans.isEmpty()) {
-                    System.out.println("Não há vans disponiveis para vendas!");
-                }
-            }else{
-                mostrarClientes();
-                Pessoa comprador = clientes.get(scanner.nextInt()-1);
-                scanner.nextLine();
-
-                System.out.print("Informe o valor da venda: R$");
-                double valor = scanner.nextDouble();
-                scanner.nextLine();
-
-                int escolha;
-
-                System.out.println("Qual novo veículo deseja vender?");
-                System.out.println("1 - Carro");
-                System.out.println("2 - Moto");
-                System.out.println("3 - Van");
-                escolha = scanner.nextInt();
-                scanner.nextLine();
-
-                switch (escolha) {
-                    case 1:
-                        mostrarVeiculos();
-                        Carro carroParaVenda = carros.get(scanner.nextInt() -1);
-                        scanner.nextLine();
-
-                        Venda novaVendaCarro = new Venda(carroParaVenda, comprador, valor, LocalDateTime.now());
-                        vendas.add(novaVendaCarro);
-                        carros.remove(carroParaVenda);
-                        break;
-
-                    case 2:
-                        mostrarVeiculos();
-                        Moto motoParaVenda = motos.get(scanner.nextInt() -1);
-                        scanner.nextLine();
-
-                        Venda novaVendaMoto = new Venda(motoParaVenda, comprador, valor, LocalDateTime.now());
-                        vendas.add(novaVendaMoto);
-                        motos.remove(motoParaVenda);
-                        break;
-                    case 3:
-                        mostrarVeiculos();
-                        Van vanParaVenda = vans.get(scanner.nextInt() -1);
-                        scanner.nextLine();
-
-                        Venda novaVendaVan = new Venda(vanParaVenda, comprador, valor, LocalDateTime.now());
-                        vendas.add(novaVendaVan);
-                        vans.remove(vanParaVenda);
-                        break;
-                }
-                System.out.println("Venda executada com sucesso!\n");
+        try {
+            if (clientes.isEmpty()) {
+                throw new ClienteNaoEncontradoException("Não há clientes cadastrados na base de dados!");
             }
-        }catch (InputMismatchException e){
-            System.out.println("Erro: Entrada invalida. Certifique-se de inserir os dados corretamente!");
-        }catch (IndexOutOfBoundsException e){
-            System.out.println("Erro: Indice invalido. Certifique-se de escolher uma opção correta!");
-        }catch (Exception e){
-            System.out.println("Erro desconhecido: "+e.getMessage());
+            if (carros.isEmpty() && motos.isEmpty() && vans.isEmpty()) {
+                throw new VeiculoIndisponivelException("Nenhum veículo disponível para venda!");
+            }
+
+            mostrarClientes();
+            System.out.print("Selecione o cliente (número): ");
+            int clienteIndex = scanner.nextInt() - 1;
+            scanner.nextLine();
+
+            if (clienteIndex < 0 || clienteIndex >= clientes.size()) {
+                throw new ClienteNaoEncontradoException("Índice de cliente inválido!");
+            }
+            Pessoa comprador = clientes.get(clienteIndex);
+
+            System.out.print("Informe o valor da venda: R$ ");
+            double valor = scanner.nextDouble();
+            scanner.nextLine();
+
+            System.out.println("Qual veículo deseja vender?");
+            System.out.println("1 - Carro");
+            System.out.println("2 - Moto");
+            System.out.println("3 - Van");
+            int escolha = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (escolha) {
+                case 1:
+                    if (carros.isEmpty()) {
+                        throw new VeiculoIndisponivelException("Nenhum carro disponível para venda!");
+                    }
+                    mostrarVeiculos(carros, "Lista de Carros");
+                    System.out.print("Escolha o número do carro para efetuar a venda:");
+                    Carro carroParaVenda = carros.get(scanner.nextInt() - 1);
+                    vendas.add(new Venda(carroParaVenda, comprador, valor, LocalDateTime.now()));
+                    carros.remove(carroParaVenda);
+                    break;
+
+                case 2:
+                    if (motos.isEmpty()) {
+                        throw new VeiculoIndisponivelException("Nenhuma moto disponível para venda!");
+                    }
+                    mostrarVeiculos(motos, "Lista de Motos");
+                    System.out.print("Escolha o número da moto para efetuar a venda:");
+                    Moto motoParaVenda = motos.get(scanner.nextInt() - 1);
+                    vendas.add(new Venda(motoParaVenda, comprador, valor, LocalDateTime.now()));
+                    motos.remove(motoParaVenda);
+                    break;
+
+                case 3:
+                    if (vans.isEmpty()) {
+                        throw new VeiculoIndisponivelException("Nenhuma van disponível para venda!");
+                    }
+                    mostrarVeiculos(vans, "Lista de Vans");
+                    System.out.print("Escolha o número da van para efetuar a venda:");
+                    Van vanParaVenda = vans.get(scanner.nextInt() - 1);
+                    vendas.add(new Venda(vanParaVenda, comprador, valor, LocalDateTime.now()));
+                    vans.remove(vanParaVenda);
+                    break;
+
+                default:
+                    System.out.println("Opção inválida.");
+            }
+            System.out.println("Venda concluída com sucesso!\n");
+        } catch (ClienteNaoEncontradoException | VeiculoIndisponivelException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Entrada inválida. Certifique-se de inserir os dados corretamente!");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("Erro desconhecido: " + e.getMessage());
         }
     }
+
 
     private static void mostrarClientes() {
         if (!clientes.isEmpty()) {
