@@ -84,5 +84,5 @@ public class Veiculo implements InterfaceVeiculo{
         System.out.println("Cor:    "+cor);
         System.out.println("Preço:  "+preco);
     }
-    
+
 }
